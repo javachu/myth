@@ -19,6 +19,19 @@ myth
 
   * ##### 内置经典的分布式事务场景demo工程，并有swagger-ui可视化界面可以快速体验。
 
+
+#  源码解析
+
+  * ## https://juejin.im/post/5a5c63986fb9a01cb64ec517 
+  
+#  视频详解
+
+  * ## 环境搭建以及运行 : http://www.iqiyi.com/w_19rw5zuigl.html
+  * ## 原理讲解（1）：http://www.iqiyi.com/w_19rw5ztpkh.html
+  * ## 原理讲解（2）：http://www.iqiyi.com/w_19rw5zslm1.html
+  
+
+
 # Prerequisite
 
   *   #### JDK 1.8+
@@ -85,11 +98,18 @@ myth
 
 * ### 为什么我运行demo工程，找不到applicationContent.xml呢？
   ##### 答：请设置项目的资源文件夹。
+  
+* ### 为什么我启动myth-admin项目的时候，会报mongo 集群连接错误呢？
+  ##### 答：这是因为项目里面有mongo代码，spring boot会自动配置，该错误没有关系，只要admin项目能正常启动就行。
 
 # Support
 
-  ### 如有任何问题欢迎加入QQ群：162614487 进行讨论 
-  ![](https://yu199195.github.io/images/weixin.jpg)
-
+ * ###  如有任何问题欢迎加入QQ群进行讨论
+ 
+   ![](https://yu199195.github.io/images/qq.png)
+   
+   
+ * ###  微信公众号
+   ![](https://yu199195.github.io/images/public.jpg)
 
 # Contribution

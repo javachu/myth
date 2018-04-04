@@ -112,11 +112,24 @@ public class MythTransactionManager {
     }
 
 
+    public void failTransaction(String errorMsg) {
+        MythTransaction mythTransaction = getCurrentTransaction();
+        if (Objects.nonNull(mythTransaction)) {
+            mythTransaction.setStatus(MythStatusEnum.FAILURE.getCode());
+            mythTransaction.setErrorMsg(errorMsg);
+            coordinatorService.updateFailTransaction(mythTransaction);
+        }
+    }
+
+
     public MythTransaction actorTransaction(ProceedingJoinPoint point, MythTransactionContext mythTransactionContext) {
         MythTransaction mythTransaction =
                 buildProviderTransaction(point, mythTransactionContext.getTransId(), MythStatusEnum.BEGIN.getCode());
         //保存当前事务信息
         coordinatorCommand.execute(new CoordinatorAction(CoordinatorActionEnum.SAVE, mythTransaction));
+
+        //当前事务保存到ThreadLocal
+        CURRENT.set(mythTransaction);
 
         //设置提供者角色
         mythTransactionContext.setRole(MythRoleEnum.PROVIDER.getCode());
@@ -128,25 +141,12 @@ public class MythTransactionManager {
     }
 
 
-    public void commitLocalTransaction(ProceedingJoinPoint point, String transId) {
-
-        MythTransaction mythTransaction;
-        if (StringUtils.isNoneBlank(transId)) {
-            mythTransaction = coordinatorService.findByTransId(transId);
-            if (Objects.nonNull(mythTransaction)) {
-                updateStatus(transId, MythStatusEnum.COMMIT.getCode());
-            } else {
-                mythTransaction = buildProviderTransaction(point, transId, MythStatusEnum.COMMIT.getCode());
-                //保存当前事务信息
-                coordinatorCommand.execute(new CoordinatorAction(CoordinatorActionEnum.SAVE, mythTransaction));
-
-            }
-        }
-
+    public void commitStatus(String tarnsId){
+        MythTransaction mythTransaction = new MythTransaction(tarnsId);
+        mythTransaction.setStatus(MythStatusEnum.COMMIT.getCode());
+        //保存当前事务信息
+        coordinatorCommand.execute(new CoordinatorAction(CoordinatorActionEnum.UPDATE_STATUS, mythTransaction));
     }
-
-
-
 
 
     public void sendMessage() {
@@ -167,7 +167,7 @@ public class MythTransactionManager {
     }
 
 
-    public MythTransaction getCurrentTransaction() {
+    private MythTransaction getCurrentTransaction() {
         return CURRENT.get();
     }
 
